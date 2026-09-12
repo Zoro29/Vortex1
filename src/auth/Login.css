@@ -1,0 +1,377 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+    --user-select: none;
+    --user-drag: none;
+    -webkit-user-drag: none;
+}
+
+.login-page {
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.page-image {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 1;
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(rgba(16, 16, 30, 0.45),
+            rgba(16, 16, 30, 0.55));
+}
+
+.login-card {
+    position: relative;
+    z-index: 2;
+
+    width: 600px;
+    padding: 45px;
+
+    border-radius: 32px;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    border: 1px solid rgba(255, 255, 255, 0.15);
+
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.25);
+
+    color: white;
+}
+
+
+.logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.logo img {
+    width: 60px;
+    border-radius: 10px;
+}
+
+.login-card h1 {
+    text-align: center;
+    font-size: 3rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.5;
+    margin-bottom: 35px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.input-group input {
+    width: 100%;
+    height: 58px;
+
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+
+    background: rgba(255, 255, 255, 0.05);
+
+    padding: 0 18px;
+
+    color: white;
+    font-size: 15px;
+}
+
+.input-group input::placeholder {
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.password-field {
+    position: relative;
+}
+
+.password-field svg {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+}
+
+.options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-top: 15px;
+    margin-bottom: 25px;
+
+    font-size: 14px;
+}
+
+.options a {
+    color: white;
+    text-decoration: none;
+}
+
+.remember {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.login-btn {
+    width: 100%;
+    height: 58px;
+
+    border: none;
+    border-radius: 40px;
+
+    background: white;
+    color: black;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: .3s;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+}
+
+.divider {
+    margin: 28px 0;
+    text-align: center;
+    position: relative;
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.divider::before {
+    left: 0;
+}
+
+.divider::after {
+    right: 0;
+}
+
+.divider span {
+    padding: 0 10px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.google-btn {
+    width: 100%;
+    height: 58px;
+
+    border-radius: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+
+    background: transparent;
+    color: white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+
+    cursor: pointer;
+}
+
+.signup-text {
+    text-align: center;
+    margin-top: 28px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.signup-text a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+@media(max-width:600px) {
+
+    .login-card {
+        width: 92%;
+        padding: 30px;
+    }
+
+    .login-card h1 {
+        font-size: 2.3rem;
+    }
+}
+
+/* =========================
+   FIELD ERROR
+========================= */
+
+.field-error {
+    display: block;
+    margin-top: 7px;
+    padding-left: 4px;
+
+    color: #ff6b6b;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    animation: errorAppear 0.2s ease;
+}
+
+
+/* =========================
+   INPUT ERROR
+========================= */
+
+.input-group input.input-error {
+    border-color: rgba(255, 80, 80, 0.8);
+    box-shadow: 0 0 0 1px rgba(255, 80, 80, 0.15);
+}
+
+
+/* =========================
+   PASSWORD ERROR
+========================= */
+
+.password-field.password-error {
+    border-radius: 16px;
+}
+
+.password-field.password-error input {
+    border-color: rgba(255, 80, 80, 0.8);
+    box-shadow: 0 0 0 1px rgba(255, 80, 80, 0.15);
+}
+
+
+/* =========================
+   ERROR ANIMATION
+========================= */
+
+@keyframes errorAppear {
+    from {
+        opacity: 0;
+        transform: translateY(-3px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.eye-icon-login {
+    position: absolute;
+    right: 65px;
+    top: 47.5%;
+    transform: translateY(-50%);
+
+    color: rgba(255, 255, 255, 0.6);
+
+    cursor: pointer;
+
+    transition: color 0.2s ease;
+}
+
+.eye-icon-login:hover {
+    color: white;
+}
+
+/* =========================
+   DISABLED BUTTON
+========================= */
+
+.login-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.login-back-button {
+    position: fixed;
+
+    top: 24px;
+    left: 24px;
+
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    gap: 9px;
+
+    padding: 10px 15px;
+
+    background: transparent;
+
+    border: 2px solid rgba(146, 192, 211, 0.8);
+
+    border-radius: 8px;
+
+    color: #fbfcfd;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.login-back-button svg {
+    font-size: 13px;
+}
+
+.login-back-button:hover {
+
+    transform: translateX(-2px);
+
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.16);
+}
+
+.login-back-button:active {
+    transform: translateX(-1px) scale(0.98);
+}

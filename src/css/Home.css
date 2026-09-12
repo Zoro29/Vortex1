@@ -1,0 +1,304 @@
+.home {
+  position: relative;
+  width: 100%;
+  background: #04060c;
+  color: #f4f6fa;
+  font-family: var(--font-body);
+  overflow-x: clip;
+}
+
+.home-hero {
+  position: relative;
+  height: 100dvh;
+}
+
+.home-stage {
+  position: absolute;
+  inset: 0;
+}
+
+.home-stage canvas {
+  display: block;
+}
+
+/* Copy sits in front of the planet, centred on the same optical axis. */
+.home-copy {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.75rem;
+  padding: 0 6vw;
+  text-align: center;
+  pointer-events: none;
+}
+
+.home-copy > * {
+  pointer-events: auto;
+}
+
+.home-label {
+  font-family: var(--font-data);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: rgba(244, 246, 250, 0.62);
+}
+
+.home-title {
+  margin: 0;
+  max-width: 18ch;
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 7vw, 6.4rem);
+  font-weight: 200;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+}
+
+.home-subtitle {
+  margin: 0;
+  max-width: 52ch;
+  font-size: clamp(0.98rem, 1.3vw, 1.15rem);
+  font-weight: 300;
+  line-height: 1.65;
+  color: rgba(244, 246, 250, 0.7);
+}
+
+.home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.home-cta {
+  font-family: var(--font-data);
+  display: inline-flex;
+  align-items: center;
+  padding: 0.95rem 2.1rem;
+  border: 1px solid #f4f6fa;
+  background: #f4f6fa;
+  color: #04060c;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+}
+
+.home-cta:hover {
+  background: transparent;
+  color: #f4f6fa;
+}
+
+.home-cta.ghost {
+  border-color: rgba(244, 246, 250, 0.32);
+  background: transparent;
+  color: rgba(244, 246, 250, 0.82);
+}
+
+.home-cta.ghost:hover {
+  border-color: #f4f6fa;
+  color: #f4f6fa;
+}
+
+.home-cta:focus-visible {
+  outline: 2px solid #f4f6fa;
+  outline-offset: 4px;
+}
+
+/* Registered so the radius interpolates smoothly instead of snapping. */
+@property --portal {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+/* Circular reveal. The circle is centred on the viewport, which is where the
+   earth sits, so it reads as an opening growing out of the planet. */
+.home-portal {
+  --portal: 0px;
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  clip-path: circle(var(--portal) at 50% 50%);
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  will-change: clip-path;
+}
+
+.home.is-entered .home-portal {
+  clip-path: none;
+  pointer-events: auto;
+}
+
+.home-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Flat scrim, no gradient: keeps the chapter type legible over bright frames. */
+.home-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 6, 12, 0.1);
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+.home.is-entered .home-scrim {
+  opacity: 1;
+}
+
+/* ---- Chapters ---------------------------------------------------------- */
+
+.story {
+  position: relative;
+  z-index: 2;
+}
+
+/* Empty blocks that only supply scroll distance. Under a viewport each: the
+   chapter timeline is what sets the pacing, and a shorter step keeps the story
+   from demanding more scrolling than it earns. */
+.story-step {
+  height: 150dvh;
+}
+
+/* Fixed anchor for the whole sequence: 20% from the right, 5% from the bottom.
+   Grid stacking keeps every chapter in one cell, so GSAP owns the transform and
+   swapping chapters never shifts the layout. */
+.story-panel {
+  position: fixed;
+  right: 20%;
+  bottom: 5%;
+  width: clamp(20rem, 34vw, 33rem);
+  display: grid;
+  pointer-events: none;
+}
+
+/* The whole chapter is what travels, so the chapter is the only compositor
+   layer. Promoting it once avoids per-frame layer churn during the transit. */
+.story-chapter {
+  grid-area: 1 / 1;
+  align-self: end;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  backface-visibility: hidden;
+  /* Chapters only ever move by transform, so nothing inside one can affect
+     layout outside it. Keeps the browser from re-measuring the panel. */
+  contain: layout;
+}
+
+/* ---- OceanX Chapter Styles ---------------------------------------------- */
+
+.headings__wrapper {
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  row-gap: 1rem;
+  width: 28rem;
+}
+
+.headings__wrapper * {
+  pointer-events: auto;
+}
+
+.headings__wrapper h3 {
+  color: #90e0ef;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -.03rem;
+  line-height: 1.1;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.headings__wrapper h2 {
+  font-size: 2.8rem;
+  font-weight: 610;
+  letter-spacing: -.08rem;
+  line-height: 1.1;
+  width: 110%;
+  margin: 0;
+  font-family: var(--font-display);
+}
+
+.headings__wrapper p {
+  color: #bdcbd3;
+  font-family: Zeist, sans-serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: -.01rem;
+  line-height: 1.4;
+  width: 100%;
+  margin: 0;
+}
+
+.index__wrapper {
+  align-items: center;
+  column-gap: .6rem;
+  display: flex;
+  padding: .6rem 0;
+  font-family: DM, monospace;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: .02rem;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.index__wrapper:before {
+  background-color: #90e0ef;
+  content: "";
+  height: .5rem;
+  width: .5rem;
+}
+
+.link__wrapper {
+  pointer-events: auto;
+  will-change: transform;
+  margin-top: 1rem;
+}
+
+@media(min-width: 1024px) {
+  .headings__wrapper { width: 38rem; }
+  .headings__wrapper h3 { font-size: 1.5rem; letter-spacing: -.05rem; width: 105%; }
+  .headings__wrapper h2 { font-size: 4.2rem; letter-spacing: -.12rem; width: 130%; }
+  .headings__wrapper p { width: 100%; font-size: 1.2rem; }
+  .index__wrapper { font-size: 0.95rem; }
+}
+
+@media screen and (min-width: 1440px) and (max-height: 900px) {
+  .headings__wrapper { width: 32rem; }
+  .headings__wrapper h3 { font-size: 1.3rem; }
+  .headings__wrapper h2 { font-size: 3.2rem; }
+}
+
+@media (max-width: 900px) {
+  .story-panel {
+    right: 6vw;
+    left: 6vw;
+    bottom: 5%;
+    width: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-cta {
+    transition: none;
+  }
+}

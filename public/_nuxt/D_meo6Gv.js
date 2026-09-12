@@ -1,0 +1,1 @@
+import{e as a,k as s,aM as n,bw as r,o as d}from"./DbhncAIU.js";const l=a({__name:"MyTeleport",props:{to:{},disabled:{type:Boolean},defer:{type:Boolean}},setup(o){const e=o;return(t,p)=>(d(),s(r,{to:e.to,defer:e.defer,disabled:e.disabled},[n(t.$slots,"default")],8,["to","defer","disabled"]))}}),_=Object.assign(l,{__name:"MyTeleport"});export{_ as default};

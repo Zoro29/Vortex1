@@ -1,0 +1,173 @@
+/*
+ * The VORTEX typography system.
+ *
+ * Three families, chosen to work as one voice:
+ *
+ *   MADE Mirage        display serif, high contrast, cinematic. Used large and
+ *                      light, where a title has to carry a whole frame.
+ *   Aspekta            the workhorse. Twenty weights ship with the family, so
+ *                      headings, body and interface all come from one design
+ *                      and the page never looks assembled from parts.
+ *   Basier Square Mono instrumentation. Square, mechanical, unmistakably a
+ *                      readout - which is exactly what the measurements are.
+ *
+ * Everything is served from /public/fonts as woff2, subset to the weights the
+ * site actually uses. `swap` everywhere: text must be readable before the
+ * webfont lands, especially on a page that opens with a full-screen headline.
+ */
+
+/* ---- Display: MADE Mirage ---------------------------------------------- */
+
+@font-face {
+  font-family: "Mirage";
+  src: url("/fonts/mirage-thin.woff2") format("woff2");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Mirage";
+  src: url("/fonts/mirage-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Mirage";
+  src: url("/fonts/mirage-medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---- Text and interface: Aspekta --------------------------------------- */
+
+@font-face {
+  font-family: "Aspekta";
+  src: url("/fonts/aspekta-150.woff2") format("woff2");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Aspekta";
+  src: url("/fonts/aspekta-250.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Aspekta";
+  src: url("/fonts/aspekta-350.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Aspekta";
+  src: url("/fonts/aspekta-450.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Aspekta";
+  src: url("/fonts/aspekta-550.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Aspekta";
+  src: url("/fonts/aspekta-650.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---- Data: Basier Square Mono ------------------------------------------ */
+
+@font-face {
+  font-family: "Basier Square Mono";
+  src: url("/fonts/basier-square-mono.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---- The system -------------------------------------------------------- */
+
+:root {
+  /* Roles, not names: a page asks for the display face, not for Mirage. */
+  --font-display: "Mirage", "Iowan Old Style", Georgia, serif;
+  --font-heading: "Aspekta", "Inter", system-ui, sans-serif;
+  --font-body: "Aspekta", "Inter", system-ui, sans-serif;
+  --font-data: "Basier Square Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /*
+   * Tracking. The display face is drawn tight and needs negative tracking at
+   * size; the mono is used small and needs the opposite to stay legible.
+   */
+  --track-display: -0.035em;
+  --track-title: -0.02em;
+  --track-body: 0;
+  --track-label: 0.42em;
+  --track-data: 0.06em;
+}
+
+html {
+  font-family: var(--font-body);
+  /* Stops the display serif looking coarse on the dark grounds this site uses. */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/*
+ * Shared roles. A page applies these rather than restating a font stack, so the
+ * whole site changes from one file.
+ */
+.t-display {
+  font-family: var(--font-display);
+  font-weight: 200;
+  letter-spacing: var(--track-display);
+  line-height: 1.02;
+}
+
+.t-title {
+  font-family: var(--font-heading);
+  font-weight: 200;
+  letter-spacing: var(--track-title);
+  line-height: 1.08;
+}
+
+.t-body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+/* Labels, eyebrows, chapter markers: wide-tracked and small. */
+.t-label {
+  font-family: var(--font-data);
+  font-weight: 400;
+  font-size: 0.66rem;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+}
+
+/* Measurements. Tabular figures keep a changing readout from jittering. */
+.t-data {
+  font-family: var(--font-data);
+  font-weight: 400;
+  letter-spacing: var(--track-data);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}

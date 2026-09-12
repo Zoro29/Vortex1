@@ -1,0 +1,271 @@
+/* ============================================================
+   VORTEX LOADER
+   ============================================================ */
+
+.vortex-loader {
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100dvh;
+
+    z-index: 99999;
+
+    overflow: hidden;
+
+    background: #050708;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    isolation: isolate;
+
+    font-family: var(--font-body);
+}
+
+
+/* ============================================================
+   LOGO CONTAINER
+   ============================================================ */
+
+.vortex-logo {
+    position: relative;
+
+    width: min(82vw, 1100px);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    transform-origin: center;
+
+    will-change: transform, opacity;
+}
+
+
+/* ============================================================
+   SVG
+   ============================================================ */
+
+.vortex-logo-svg {
+    display: block;
+
+    width: 100%;
+    height: auto;
+
+    overflow: visible;
+}
+
+
+/* ============================================================
+   LOGO TEXT
+   ============================================================ */
+
+.vortex-svg-text {
+    font-family: var(--font-body);
+
+    font-size: 205px;
+
+    font-weight: 800;
+
+    letter-spacing: -0.03em;
+}
+
+
+/* ============================================================
+   EMPTY LOGO
+   ============================================================ */
+
+.vortex-outline {
+    fill: transparent;
+
+    stroke: rgba(255, 255, 255, 0.2);
+
+    stroke-width: 1.5;
+}
+
+
+/* ============================================================
+   WATER WAVE
+   ============================================================ */
+
+.vortex-wave {
+    transform-origin: center;
+
+    animation:
+        vortex-wave-motion 2.8s ease-in-out infinite;
+}
+
+
+/* ============================================================
+   REALISTIC WATER MOTION
+   ============================================================ */
+
+@keyframes vortex-wave {
+
+    0% {
+        transform:
+            translateX(-35px) scaleX(1.02);
+    }
+
+    50% {
+        transform:
+            translateX(35px) scaleX(1.08);
+    }
+
+    100% {
+        transform:
+            translateX(-35px) scaleX(1.02);
+    }
+
+}
+
+
+/* ============================================================
+   PROGRESS
+   ============================================================ */
+
+.vortex-loader-progress {
+    position: absolute;
+
+    bottom: 8%;
+
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    font-size: 0.65rem;
+
+    font-weight: 600;
+
+    letter-spacing: 0.2em;
+
+    color: rgba(255, 255, 255, 0.45);
+
+    text-transform: uppercase;
+
+    pointer-events: none;
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+    .vortex-logo {
+        width: 90vw;
+    }
+
+    .vortex-svg-text {
+        font-size: 205px;
+    }
+
+    .vortex-loader-progress {
+        bottom: 10%;
+    }
+
+}
+
+/* ============================================================
+   MAIN WATER SURFACE
+   ============================================================ */
+
+.water-surface-main {
+    animation:
+        water-surface-1 2.4s ease-in-out infinite;
+}
+
+
+/* ============================================================
+   SECOND WATER LAYER
+   ============================================================ */
+
+.water-surface-secondary {
+    animation:
+        water-surface-2 3.1s ease-in-out infinite;
+}
+
+
+/* ============================================================
+   MAIN WATER MOTION
+   ============================================================ */
+
+@keyframes water-surface-1 {
+
+    0% {
+        transform:
+            translateX(-25px) translateY(0) scaleX(1);
+    }
+
+    50% {
+        transform:
+            translateX(25px) translateY(-8px) scaleX(1.04);
+    }
+
+    100% {
+        transform:
+            translateX(-25px) translateY(0) scaleX(1);
+    }
+
+}
+
+
+/* ============================================================
+   SECONDARY WATER MOTION
+   ============================================================ */
+
+@keyframes water-surface-2 {
+
+    0% {
+        transform:
+            translateX(30px) translateY(5px);
+    }
+
+    50% {
+        transform:
+            translateX(-30px) translateY(-5px);
+    }
+
+    100% {
+        transform:
+            translateX(30px) translateY(5px);
+    }
+
+}
+
+
+/* ============================================================
+   SHIMMER
+   ============================================================ */
+
+.water-shimmer {
+
+    animation:
+        water-shimmer-move 2.8s linear infinite;
+
+    opacity: 0.35;
+
+}
+
+
+/* ============================================================
+   SHIMMER MOVEMENT
+   ============================================================ */
+
+@keyframes water-shimmer-move {
+
+    0% {
+        transform: translateX(-500px);
+    }
+
+    100% {
+        transform: translateX(1200px);
+    }
+
+}

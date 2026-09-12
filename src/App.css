@@ -1,0 +1,22 @@
+html {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+}
+
+/* Hide the scrollbar everywhere without touching scroll behaviour. Firefox and
+   IE use the standard properties; WebKit needs the pseudo-element zeroed. */
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}

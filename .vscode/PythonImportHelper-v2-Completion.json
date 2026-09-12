@@ -1,0 +1,203 @@
+[
+    {
+        "label": "annotations",
+        "importPath": "__future__",
+        "description": "__future__",
+        "isExtraImport": true,
+        "detail": "__future__",
+        "documentation": {}
+    },
+    {
+        "label": "json",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "json",
+        "description": "json",
+        "detail": "json",
+        "documentation": {}
+    },
+    {
+        "label": "argparse",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "argparse",
+        "description": "argparse",
+        "detail": "argparse",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "timedelta",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "timezone",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "Path",
+        "importPath": "pathlib",
+        "description": "pathlib",
+        "isExtraImport": true,
+        "detail": "pathlib",
+        "documentation": {}
+    },
+    {
+        "label": "numpy",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "numpy",
+        "description": "numpy",
+        "detail": "numpy",
+        "documentation": {}
+    },
+    {
+        "label": "h5py",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "h5py",
+        "description": "h5py",
+        "detail": "h5py",
+        "documentation": {}
+    },
+    {
+        "label": "netcdf_file",
+        "importPath": "scipy.io",
+        "description": "scipy.io",
+        "isExtraImport": true,
+        "detail": "scipy.io",
+        "documentation": {}
+    },
+    {
+        "label": "platform_id",
+        "kind": 2,
+        "importPath": "scripts.extract_argo_netcdf",
+        "description": "scripts.extract_argo_netcdf",
+        "peekOfCode": "def platform_id(row: np.ndarray) -> str:\n    return b\"\".join(row).decode(\"ascii\").strip()\ndef valid(values: np.ndarray) -> np.ndarray:\n    values = np.asarray(values, dtype=float)\n    return values[np.isfinite(values) & (np.abs(values) < ARBITRARY_FILL_LIMIT)]\ndef rounded_mean(values: np.ndarray) -> float | None:\n    values = valid(values)\n    return round(float(np.mean(values)), 3) if values.size else None\ndef rounded_surface(values: np.ndarray, pressure: np.ndarray) -> float | None:\n    values = np.asarray(values, dtype=float)",
+        "detail": "scripts.extract_argo_netcdf",
+        "documentation": {}
+    },
+    {
+        "label": "valid",
+        "kind": 2,
+        "importPath": "scripts.extract_argo_netcdf",
+        "description": "scripts.extract_argo_netcdf",
+        "peekOfCode": "def valid(values: np.ndarray) -> np.ndarray:\n    values = np.asarray(values, dtype=float)\n    return values[np.isfinite(values) & (np.abs(values) < ARBITRARY_FILL_LIMIT)]\ndef rounded_mean(values: np.ndarray) -> float | None:\n    values = valid(values)\n    return round(float(np.mean(values)), 3) if values.size else None\ndef rounded_surface(values: np.ndarray, pressure: np.ndarray) -> float | None:\n    values = np.asarray(values, dtype=float)\n    pressure = np.asarray(pressure, dtype=float)\n    if values.size == 0 or pressure.size == 0:",
+        "detail": "scripts.extract_argo_netcdf",
+        "documentation": {}
+    },
+    {
+        "label": "rounded_mean",
+        "kind": 2,
+        "importPath": "scripts.extract_argo_netcdf",
+        "description": "scripts.extract_argo_netcdf",
+        "peekOfCode": "def rounded_mean(values: np.ndarray) -> float | None:\n    values = valid(values)\n    return round(float(np.mean(values)), 3) if values.size else None\ndef rounded_surface(values: np.ndarray, pressure: np.ndarray) -> float | None:\n    values = np.asarray(values, dtype=float)\n    pressure = np.asarray(pressure, dtype=float)\n    if values.size == 0 or pressure.size == 0:\n        return None\n    mask = (\n        np.isfinite(values)",
+        "detail": "scripts.extract_argo_netcdf",
+        "documentation": {}
+    },
+    {
+        "label": "rounded_surface",
+        "kind": 2,
+        "importPath": "scripts.extract_argo_netcdf",
+        "description": "scripts.extract_argo_netcdf",
+        "peekOfCode": "def rounded_surface(values: np.ndarray, pressure: np.ndarray) -> float | None:\n    values = np.asarray(values, dtype=float)\n    pressure = np.asarray(pressure, dtype=float)\n    if values.size == 0 or pressure.size == 0:\n        return None\n    mask = (\n        np.isfinite(values)\n        & np.isfinite(pressure)\n        & (np.abs(values) < ARBITRARY_FILL_LIMIT)\n        & (np.abs(pressure) < ARBITRARY_FILL_LIMIT)",
+        "detail": "scripts.extract_argo_netcdf",
+        "documentation": {}
+    },
+    {
+        "label": "read_variable",
+        "kind": 2,
+        "importPath": "scripts.extract_argo_netcdf",
+        "description": "scripts.extract_argo_netcdf",
+        "peekOfCode": "def read_variable(variable) -> np.ndarray:\n    \"\"\"Read a variable from either NetCDF-3 (SciPy) or NetCDF-4 (HDF5).\"\"\"\n    return variable.data.copy() if hasattr(variable, \"data\") else variable[()]\ndef variable_values(variables: dict, name: str, index: int) -> np.ndarray:\n    \"\"\"Return a profile's values, or an empty array when a sensor is absent.\"\"\"\n    values = variables.get(name)\n    return np.asarray(values[index]) if values is not None else np.array([])\ndef iso_date(juld: float) -> str | None:\n    # JULD is days since 1950, so valid 2026 dates are already ~27,760.\n    if not np.isfinite(juld) or abs(juld) >= 1e6:",
+        "detail": "scripts.extract_argo_netcdf",
+        "documentation": {}
+    },
+    {
+        "label": "variable_values",
+        "kind": 2,
+        "importPath": "scripts.extract_argo_netcdf",
+        "description": "scripts.extract_argo_netcdf",
+        "peekOfCode": "def variable_values(variables: dict, name: str, index: int) -> np.ndarray:\n    \"\"\"Return a profile's values, or an empty array when a sensor is absent.\"\"\"\n    values = variables.get(name)\n    return np.asarray(values[index]) if values is not None else np.array([])\ndef iso_date(juld: float) -> str | None:\n    # JULD is days since 1950, so valid 2026 dates are already ~27,760.\n    if not np.isfinite(juld) or abs(juld) >= 1e6:\n        return None\n    # Argo Julian days are measured from 1950-01-01 UTC.\n    return (datetime(1950, 1, 1, tzinfo=timezone.utc) + timedelta(days=float(juld))).isoformat().replace(\"+00:00\", \"Z\")",
+        "detail": "scripts.extract_argo_netcdf",
+        "documentation": {}
+    },
+    {
+        "label": "iso_date",
+        "kind": 2,
+        "importPath": "scripts.extract_argo_netcdf",
+        "description": "scripts.extract_argo_netcdf",
+        "peekOfCode": "def iso_date(juld: float) -> str | None:\n    # JULD is days since 1950, so valid 2026 dates are already ~27,760.\n    if not np.isfinite(juld) or abs(juld) >= 1e6:\n        return None\n    # Argo Julian days are measured from 1950-01-01 UTC.\n    return (datetime(1950, 1, 1, tzinfo=timezone.utc) + timedelta(days=float(juld))).isoformat().replace(\"+00:00\", \"Z\")\ndef extract_file(path: Path) -> list[dict]:\n    try:\n        dataset = netcdf_file(path, \"r\", mmap=False)\n    except TypeError:",
+        "detail": "scripts.extract_argo_netcdf",
+        "documentation": {}
+    },
+    {
+        "label": "extract_file",
+        "kind": 2,
+        "importPath": "scripts.extract_argo_netcdf",
+        "description": "scripts.extract_argo_netcdf",
+        "peekOfCode": "def extract_file(path: Path) -> list[dict]:\n    try:\n        dataset = netcdf_file(path, \"r\", mmap=False)\n    except TypeError:\n        dataset = h5py.File(path, \"r\")\n    with dataset:\n        variables = dataset.variables if hasattr(dataset, \"variables\") else dataset\n        platforms = read_variable(variables[\"PLATFORM_NUMBER\"])\n        dates = read_variable(variables[\"JULD\"])\n        latitudes = read_variable(variables[\"LATITUDE\"])",
+        "detail": "scripts.extract_argo_netcdf",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "scripts.extract_argo_netcdf",
+        "description": "scripts.extract_argo_netcdf",
+        "peekOfCode": "def main() -> None:\n    parser = argparse.ArgumentParser(description=\"Create a browser index from BGC-Argo S-profile files.\")\n    parser.add_argument(\"--limit\", type=int, help=\"Process only this many files (useful for a quick local preview).\")\n    args = parser.parse_args()\n    summaries = []\n    paths = sorted(SOURCE.glob(\"*.nc\"))\n    if args.limit is not None:\n        if args.limit <= 0:\n            parser.error(\"--limit must be a positive integer\")\n        # Spread preview records across the complete collection so the UI is",
+        "detail": "scripts.extract_argo_netcdf",
+        "documentation": {}
+    },
+    {
+        "label": "ROOT",
+        "kind": 5,
+        "importPath": "scripts.extract_argo_netcdf",
+        "description": "scripts.extract_argo_netcdf",
+        "peekOfCode": "ROOT = Path(__file__).resolve().parents[1]\nSOURCE = ROOT / \"src\" / \"data\" / \"argo_data\" / \"bgc_sprof\"\nOUTPUT = ROOT / \"src\" / \"data\" / \"argoNetcdfSummaries.json\"\nARBITRARY_FILL_LIMIT = 1e4\ndef platform_id(row: np.ndarray) -> str:\n    return b\"\".join(row).decode(\"ascii\").strip()\ndef valid(values: np.ndarray) -> np.ndarray:\n    values = np.asarray(values, dtype=float)\n    return values[np.isfinite(values) & (np.abs(values) < ARBITRARY_FILL_LIMIT)]\ndef rounded_mean(values: np.ndarray) -> float | None:",
+        "detail": "scripts.extract_argo_netcdf",
+        "documentation": {}
+    },
+    {
+        "label": "SOURCE",
+        "kind": 5,
+        "importPath": "scripts.extract_argo_netcdf",
+        "description": "scripts.extract_argo_netcdf",
+        "peekOfCode": "SOURCE = ROOT / \"src\" / \"data\" / \"argo_data\" / \"bgc_sprof\"\nOUTPUT = ROOT / \"src\" / \"data\" / \"argoNetcdfSummaries.json\"\nARBITRARY_FILL_LIMIT = 1e4\ndef platform_id(row: np.ndarray) -> str:\n    return b\"\".join(row).decode(\"ascii\").strip()\ndef valid(values: np.ndarray) -> np.ndarray:\n    values = np.asarray(values, dtype=float)\n    return values[np.isfinite(values) & (np.abs(values) < ARBITRARY_FILL_LIMIT)]\ndef rounded_mean(values: np.ndarray) -> float | None:\n    values = valid(values)",
+        "detail": "scripts.extract_argo_netcdf",
+        "documentation": {}
+    },
+    {
+        "label": "OUTPUT",
+        "kind": 5,
+        "importPath": "scripts.extract_argo_netcdf",
+        "description": "scripts.extract_argo_netcdf",
+        "peekOfCode": "OUTPUT = ROOT / \"src\" / \"data\" / \"argoNetcdfSummaries.json\"\nARBITRARY_FILL_LIMIT = 1e4\ndef platform_id(row: np.ndarray) -> str:\n    return b\"\".join(row).decode(\"ascii\").strip()\ndef valid(values: np.ndarray) -> np.ndarray:\n    values = np.asarray(values, dtype=float)\n    return values[np.isfinite(values) & (np.abs(values) < ARBITRARY_FILL_LIMIT)]\ndef rounded_mean(values: np.ndarray) -> float | None:\n    values = valid(values)\n    return round(float(np.mean(values)), 3) if values.size else None",
+        "detail": "scripts.extract_argo_netcdf",
+        "documentation": {}
+    },
+    {
+        "label": "ARBITRARY_FILL_LIMIT",
+        "kind": 5,
+        "importPath": "scripts.extract_argo_netcdf",
+        "description": "scripts.extract_argo_netcdf",
+        "peekOfCode": "ARBITRARY_FILL_LIMIT = 1e4\ndef platform_id(row: np.ndarray) -> str:\n    return b\"\".join(row).decode(\"ascii\").strip()\ndef valid(values: np.ndarray) -> np.ndarray:\n    values = np.asarray(values, dtype=float)\n    return values[np.isfinite(values) & (np.abs(values) < ARBITRARY_FILL_LIMIT)]\ndef rounded_mean(values: np.ndarray) -> float | None:\n    values = valid(values)\n    return round(float(np.mean(values)), 3) if values.size else None\ndef rounded_surface(values: np.ndarray, pressure: np.ndarray) -> float | None:",
+        "detail": "scripts.extract_argo_netcdf",
+        "documentation": {}
+    }
+]

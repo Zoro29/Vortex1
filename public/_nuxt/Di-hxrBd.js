@@ -1,0 +1,1 @@
+import{_ as t,c as n,aM as s,o as a}from"./DbhncAIU.js";const c={},o={class:"page"};function _(e,r){return a(),n("div",o,[s(e.$slots,"default",{},void 0,!0)])}const f=Object.assign(t(c,[["render",_],["__scopeId","data-v-0b64f2fc"]]),{__name:"Page"});export{f as default};

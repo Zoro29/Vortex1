@@ -1,0 +1,541 @@
+/*
+ * The Journey: one continuous descent, told in eight chapters.
+ *
+ * The water (ocean.css) is fixed behind everything and reacts to `--light`.
+ * Chapters scroll over it on sticky stages, so a chapter is held while it is
+ * read and then recedes — there is no point at which a section visibly ends.
+ */
+
+.journey {
+  --light: 1;
+  position: relative;
+  color: #eef4f8;
+  font-family: var(--font-body);
+  overflow-x: clip;
+  background: #010912;
+}
+
+/* A slow light that follows the reader, like a lamp in the water. */
+.journey-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 46vmax;
+  height: 46vmax;
+  margin: -23vmax 0 0 -23vmax;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+      rgba(150, 220, 245, 0.14) 0%,
+      rgba(120, 200, 235, 0.05) 38%,
+      rgba(0, 0, 0, 0) 70%);
+  opacity: calc(0.35 + var(--light) * 0.65);
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* ---- Instrument rail ---------------------------------------------------- */
+
+.journey-hud {
+  font-family: var(--font-data);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.9rem 5vw;
+  font-size: 0.66rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  mix-blend-mode: difference;
+}
+
+.hud-back,
+.hud-audio {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: rgba(238, 244, 248, 0.7);
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.hud-back:hover,
+.hud-audio:hover,
+.hud-audio.is-on {
+  color: #eef4f8;
+}
+
+.hud-depth {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  color: rgba(238, 244, 248, 0.55);
+}
+
+.hud-depth b {
+  font-variant-numeric: tabular-nums;
+  font-size: 1.3rem;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: #eef4f8;
+}
+
+/* Depth scale down the left edge: a hairline, filled as you descend. */
+.journey-rail {
+  font-family: var(--font-data);
+  position: fixed;
+  top: 50%;
+  left: 3.4vw;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  transform: translateY(-50%);
+  font-size: 0.54rem;
+  letter-spacing: 0.28em;
+  color: rgba(238, 244, 248, 0.4);
+  pointer-events: none;
+}
+
+.rail-line {
+  width: 1px;
+  height: 26vh;
+  background: rgba(238, 244, 248, 0.16);
+}
+
+.rail-line i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: rgba(238, 244, 248, 0.75);
+  transform: scaleY(0);
+  transform-origin: top center;
+}
+
+/* ---- Chapters ----------------------------------------------------------- */
+
+/*
+ * Each chapter is given more scroll than a screen, and its stage sticks for the
+ * duration. That is what turns a section into a held moment: the reader stays
+ * with it, the water keeps moving, and the next chapter rises underneath.
+ */
+.chapter {
+  position: relative;
+  z-index: 2;
+  /* min-height, not height: if a stage ever needs more room than a screen, the
+     section grows with it instead of letting it spill over its neighbours. */
+  min-height: 210vh;
+}
+
+/*
+ * Every piece of a chapter is placed in this grid. Nothing is absolutely
+ * positioned any more: the story, the detail column and the readings each own a
+ * cell, so a tall chapter can never run underneath the row below it or up into
+ * the header above it.
+ *
+ *   +--------------------------+--------------+
+ *   | story                    | detail       |  1fr
+ *   +--------------------------+--------------+
+ *   | readings                                |  auto
+ *   +-----------------------------------------+
+ */
+.chapter-stage {
+  position: sticky;
+  top: 0;
+  /*
+   * min-height so the box can grow to its content. With a fixed height the grid
+   * had no room to give and the story row overflowed the stage entirely.
+   *
+   * The story row is minmax(min-content, 1fr): the 1fr still pushes the
+   * readings to the bottom of the frame, but the min-content floor stops the
+   * track collapsing under its own content, which is what pushed text out of
+   * the section and over the chapters above and below it.
+   */
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: minmax(min-content, 1fr) auto;
+  align-items: center;
+  column-gap: 6vw;
+  row-gap: 3vh;
+  padding: 8vh 10vw 20vh 9vw;
+  will-change: transform, opacity, filter;
+}
+
+/*
+ * `--z` is depth in the water, 0 against the camera to 1 far back in the haze.
+ * It is the single control for how present a fragment feels, and the timeline
+ * reads the same number to decide how far it drifts.
+ */
+.frag {
+  --z: 0.3;
+  filter: blur(calc(var(--z) * 0.8px));
+  opacity: calc(1 - var(--z) * 0.3);
+  will-change: transform, opacity, filter;
+
+}
+
+.chapter-axis {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: center;
+  max-width: 62ch;
+}
+
+.chapter-label {
+  font-family: var(--font-data);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  font-size: 0.64rem;
+  font-weight: 500;
+  letter-spacing: 0.46em;
+  text-transform: uppercase;
+  color: rgba(238, 244, 248, 0.7);
+}
+
+.chapter-label i {
+  width: 3.2rem;
+  height: 1px;
+  background: rgba(238, 244, 248, 0.45);
+}
+
+.chapter-title {
+  margin: 0 20vh 10rem 0;
+  font-family: var(--font-display);
+  max-width: 18ch;
+  font-size: clamp(2.2rem, 5.2vw, 5rem);
+  font-weight: 200;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  text-wrap: pretty;
+}
+
+.chapter-subtitle {
+  margin: 20vh 0 1.8rem;
+  font-size: clamp(0.92rem, 1.05vw, 1.02rem);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  color: rgba(238, 244, 248, 0.62);
+}
+
+.chapter-narrative {
+  margin: 25vh 0;
+  max-width: 52ch;
+  font-size: clamp(1rem, 1.25vw, 1.24rem);
+  font-weight: 300;
+  line-height: 1.68;
+  color: rgba(238, 244, 248, 0.88);
+}
+
+/* A single line held on its own, further into the water. */
+.chapter-fact {
+  font-family: var(--font-display);
+  max-width: 26ch;
+  margin: 0;
+  font-size: clamp(0.95rem, 1.4vw, 1.35rem);
+  font-weight: 200;
+  font-style: italic;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  color: rgba(238, 244, 248, 0.72);
+}
+
+/* The right-hand column. Detail sits at the top of it and the held fact at the
+   bottom, laid out in flow so they can never overlap however short the frame
+   gets. */
+.chapter-side {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+  width: min(30ch, 26vw);
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
+
+.chapter-detail {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.insight {
+  min-width: 0;
+}
+
+.insight span {
+  font-family: var(--font-data);
+  display: block;
+  margin-bottom: 5rem;
+  font-size: 0.55rem;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: rgba(238, 244, 248, 0.5);
+}
+
+.insight p {
+  margin: 0;
+  padding-top: 0.7rem;
+  border-top: 1px solid rgba(238, 244, 248, 0.16);
+  font-size: 0.92rem;
+  font-weight: 300;
+  line-height: 1.55;
+  color: rgba(238, 244, 248, 0.86);
+}
+
+/* Readings hung along the bottom of the frame, deepest layer of all. */
+.chapter-params {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem clamp(1.8rem, 4vw, 4rem);
+}
+
+.chapter-params p {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.chapter-params span {
+  font-family: var(--font-data);
+  font-size: 0.52rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(238, 244, 248, 0.45);
+}
+
+.chapter-params b {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(1.1rem, 1.7vw, 1.6rem);
+  font-weight: 200;
+  letter-spacing: -0.02em;
+  color: rgba(238, 244, 248, 0.9);
+}
+
+.chapter-params i {
+  font-style: normal;
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  color: rgba(238, 244, 248, 0.42);
+}
+
+.chapter-cta {
+  font-family: var(--font-data);
+  display: inline-flex;
+  align-items: center;
+  margin-top: 2.4rem;
+  padding: 1rem 2.6rem;
+  border: 1px solid rgba(238, 244, 248, 0.75);
+  color: #eef4f8;
+  font-size: 0.76rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+.chapter-cta:hover {
+  background: #eef4f8;
+  color: #010912;
+}
+
+/* ---- The pipeline, told sideways ---------------------------------------- */
+
+/*
+ * One chapter changes axis. The pipeline is a sequence, so it is read as one:
+ * pinned, and travelling left while the page scrolls down.
+ */
+.pipeline {
+  position: relative;
+  z-index: 2;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.pipeline-track {
+  display: flex;
+  gap: 8vw;
+  padding: 0 9vw;
+  will-change: transform;
+}
+
+.stage {
+  flex: 0 0 auto;
+  width: min(42ch, 62vw);
+}
+
+.stage-index {
+  font-family: var(--font-display);
+  display: block;
+  margin-bottom: 1.6rem;
+  font-size: clamp(3rem, 7vw, 6rem);
+  font-weight: 200;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: rgba(238, 244, 248, 0.16);
+}
+
+.stage-label {
+  font-family: var(--font-data);
+  display: block;
+  margin-bottom: 1rem;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: rgba(238, 244, 248, 0.6);
+}
+
+.stage h3 {
+  margin: 0 0 1.1rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 2.8vw, 2.6rem);
+  font-weight: 200;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+
+.stage p {
+  margin: 0 0 1.4rem;
+  font-size: 0.96rem;
+  font-weight: 300;
+  line-height: 1.7;
+  color: rgba(238, 244, 248, 0.8);
+}
+
+.stage-meta {
+  font-family: var(--font-data);
+  font-size: 0.58rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(238, 244, 248, 0.45);
+}
+
+/* Laptop-height screens: the type has to come down or a long chapter will not
+   fit the grid, however well the grid is built. */
+@media (max-height: 820px) {
+  .chapter-stage {
+    padding: 13vh 8vw 6vh 9vw;
+    row-gap: 2vh;
+  }
+
+  .chapter-title {
+    font-size: clamp(1.9rem, 3.6vw, 3rem);
+    margin-bottom: 1rem;
+  }
+
+  .chapter-label {
+    margin-bottom: 1.2rem;
+  }
+
+  .chapter-subtitle {
+    margin-bottom: 1.1rem;
+  }
+
+  .chapter-narrative {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .chapter-side {
+    gap: 1.4rem;
+  }
+
+  .chapter-cta {
+    margin-top: 1.4rem;
+  }
+}
+
+/* ---- Narrow screens ----------------------------------------------------- */
+
+@media (max-width: 1000px) {
+  .journey-rail {
+    display: none;
+  }
+
+  /* A phone cannot hold a chapter in a fixed 100dvh box once the three parts
+     stack. The stage grows to its content and stops sticking, so nothing is
+     clipped and nothing lands on top of anything else.
+
+     The base rule is a min-height, so it has to be released here explicitly:
+     `height: auto` alone would leave the 210vh floor in place and open a long
+     empty gap under every chapter. */
+  .chapter {
+    min-height: 0;
+    height: auto;
+  }
+
+  .chapter-stage {
+    position: static;
+    min-height: 100dvh;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    align-items: start;
+    align-content: start;
+    padding: 15vh 7vw 8vh;
+    row-gap: 0;
+  }
+
+  .chapter-axis,
+  .chapter-side,
+  .chapter-params {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .chapter-title {
+    max-width: none;
+    font-size: clamp(1.8rem, 8vw, 2.6rem);
+  }
+
+  .chapter-narrative {
+    font-size: 0.95rem;
+  }
+
+  .chapter-side {
+    width: auto;
+    margin-top: 2.4rem;
+    gap: 2rem;
+  }
+
+  .chapter-detail {
+    gap: 1.1rem;
+  }
+
+  .chapter-fact {
+    max-width: none;
+  }
+
+  .chapter-params {
+    gap: 1rem 2rem;
+    margin-top: 2.4rem;
+  }
+
+  .stage {
+    width: 78vw;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journey-glow {
+    display: none;
+  }
+}

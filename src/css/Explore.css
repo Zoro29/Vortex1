@@ -1,0 +1,721 @@
+.dive {
+  --light: 1;
+  position: fixed;
+  inset: 0;
+  color: #eef4f8;
+  font-family: var(--font-body);
+  /* The journey is a fixed stage, not a document. Nothing here scrolls, so no
+     wheel, key or touch gesture has anything to act on. */
+  overflow: hidden;
+  touch-action: none;
+  overscroll-behavior: none;
+}
+
+/* The water layers live in ocean.css, shared with the Journey page. */
+
+/* ---- The float --------------------------------------------------------- */
+
+/*
+ * Deployed in the water rather than pasted on top of it: it sits between the
+ * particle field and the text, takes the water's own colour through a blend
+ * mode, and never stops moving.
+ *
+ * GSAP owns the transform on .argo (depth, tilt, recession through the
+ * journey). The idle bob lives on .argo-inner so the two never collide.
+ */
+.argo {
+  position: absolute;
+  top: 9%;
+  left: 50%;
+  z-index: 2;
+  width: clamp(150px, 15vw, 250px);
+  /* No CSS transform here: GSAP owns this element's transform outright, so the
+     horizontal centring is applied as an xPercent baseline in the timeline. */
+  transform: translateX(-50%);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: none;
+  will-change: transform, opacity, filter;
+}
+
+.argo-inner {
+  position: relative;
+  animation: argo-drift 11s ease-in-out infinite alternate;
+}
+
+/* Suspended, never level: it hangs and swings the way a float actually does. */
+@keyframes argo-drift {
+  from {
+    transform: translate3d(-6px, -10px, 0) rotate(-2.5deg);
+  }
+  to {
+    transform: translate3d(6px, 10px, 0) rotate(2.5deg);
+  }
+}
+
+.argo-sprite {
+  display: block;
+  width: 100%;
+  height: auto;
+  /* Takes on the colour of the water it is hanging in. */
+  filter: saturate(0.85) brightness(0.92) drop-shadow(0 18px 34px rgba(0, 0, 0, 0.45));
+}
+
+/* ---- Component call-outs ---------------------------------------------- */
+
+.argo-hotspot {
+  position: absolute;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.9s ease;
+}
+
+.argo-hotspot.is-active {
+  opacity: 1;
+}
+
+.argo-pin {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #eef4f8;
+  box-shadow: 0 0 0 0 rgba(238, 244, 248, 0.6);
+  animation: argo-ping 2.6s ease-out infinite;
+}
+
+@keyframes argo-ping {
+  from {
+    box-shadow: 0 0 0 0 rgba(238, 244, 248, 0.5);
+  }
+  to {
+    box-shadow: 0 0 0 16px rgba(238, 244, 248, 0);
+  }
+}
+
+.argo-leader {
+  width: 3.2vw;
+  min-width: 34px;
+  height: 1px;
+  background: rgba(238, 244, 248, 0.4);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s;
+}
+
+.argo-hotspot.is-active .argo-leader {
+  transform: scaleX(1);
+}
+
+.argo-tag {
+  display: block;
+  width: max-content;
+  max-width: 22ch;
+  margin-left: 0.7rem;
+}
+
+.argo-tag b {
+  display: block;
+  font-size: 0.58rem;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(238, 244, 248, 0.92);
+}
+
+.argo-tag em {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.76rem;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 1.5;
+  color: rgba(238, 244, 248, 0.62);
+}
+
+/* ---- Chrome ------------------------------------------------------------ */
+
+.dive-head {
+  font-family: var(--font-data);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.9rem 5vw;
+  font-size: 0.68rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+}
+
+.dive-back,
+.dive-control {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: rgba(238, 244, 248, 0.66);
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.dive-back:hover,
+.dive-control:hover,
+.dive-control[aria-pressed="true"] {
+  color: #eef4f8;
+}
+
+.dive-audio {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.audio-btn {
+  display: grid;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  padding: 0;
+  border: 1px solid rgba(238, 244, 248, 0.22);
+  border-radius: 50%;
+  background: none;
+  color: rgba(238, 244, 248, 0.6);
+  cursor: pointer;
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+.speed-btn {
+  width: auto;
+  min-width: 2.6rem;
+  padding: 0 0.55rem;
+  border-radius: 999px;
+  font-family: var(--font-data);
+  font-size: 0.62rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+}
+
+.audio-btn svg {
+  width: 0.8rem;
+  height: 0.8rem;
+  fill: currentColor;
+}
+
+.audio-btn:hover {
+  border-color: rgba(238, 244, 248, 0.6);
+  color: #eef4f8;
+}
+
+/* The active mode reads as the filled one. */
+.audio-btn.is-on {
+  border-color: rgba(238, 244, 248, 0.85);
+  color: #eef4f8;
+}
+
+.audio-btn:focus-visible {
+  outline: 1px solid #eef4f8;
+  outline-offset: 3px;
+}
+
+.dive-depth {
+  color: rgba(238, 244, 248, 0.55);
+}
+
+.dive-depth b {
+  font-variant-numeric: tabular-nums;
+  font-size: 1.35rem;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: #eef4f8;
+}
+
+/* ---- Prologue ---------------------------------------------------------- */
+
+/* The opening: centred under the float, on screen from the first frame. */
+.prologue {
+  position: absolute;
+  left: 50%;
+  bottom: 13%;
+  z-index: 4;
+  width: min(62ch, 80vw);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.prologue-line {
+  will-change: transform, opacity, filter;
+}
+
+.prologue-label {
+  font-family: var(--font-data);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.3rem;
+  font-size: 0.64rem;
+  font-weight: 500;
+  letter-spacing: 0.48em;
+  text-indent: 0.48em;
+  text-transform: uppercase;
+  color: rgba(238, 244, 248, 0.74);
+}
+
+.prologue-label i {
+  width: 2.4rem;
+  height: 1px;
+  background: rgba(238, 244, 248, 0.42);
+}
+
+.prologue-title {
+  margin: 0 0 1.2rem;
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 5vw, 4.6rem);
+  font-weight: 200;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+}
+
+.prologue-intro {
+  margin: 0 0 2.4rem;
+  max-width: 52ch;
+  font-size: clamp(0.98rem, 1.15vw, 1.14rem);
+  font-weight: 300;
+  line-height: 1.74;
+  color: rgba(238, 244, 248, 0.82);
+}
+
+.prologue-cta {
+  font-family: var(--font-data);
+  padding: 1rem 2.6rem;
+  border: 1px solid rgba(238, 244, 248, 0.75);
+  background: none;
+  color: #eef4f8;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+}
+
+.prologue-cta:hover {
+  border-color: #eef4f8;
+  background: #eef4f8;
+  color: #03121f;
+}
+
+.prologue-cta:focus-visible {
+  outline: 2px solid #eef4f8;
+  outline-offset: 4px;
+}
+
+/* ---- Scenes ------------------------------------------------------------ */
+
+/* Every scene occupies the same stage. Only one is ever faded up. */
+/* The stack covers the whole viewport, so it must not intercept clicks meant
+   for whatever is under it. The active scene opts back in: the timeline sets
+   pointer-events auto on it as it arrives. */
+.scene-stack {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ---- Fragments --------------------------------------------------------- */
+
+/*
+ * A fragment is one piece of the scene sitting at its own place in the frame
+ * and its own depth in the water. `--z` runs 0 (against the camera) to 1 (far
+ * back in the haze) and is the single control for how present it feels:
+ * blur, dimming and, in the timeline, how far it drifts with the current.
+ *
+ * GSAP owns the transform on .frag. The suspended float lives on .frag-inner
+ * so the two never fight over the same property.
+ */
+.frag {
+  --z: 0.5;
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform, opacity, filter;
+}
+
+.frag-inner {
+  display: block;
+  /* Just enough to place a fragment in the water. Anything more and the text
+     stops being readable, which costs more than the depth cue is worth. */
+  filter: blur(calc(var(--z) * 0.9px));
+  opacity: calc(1 - var(--z) * 0.34);
+  animation: suspend 13s ease-in-out infinite alternate;
+}
+
+/* Nothing in water is ever still. Each depth breathes at its own rate. */
+@keyframes suspend {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(calc(var(--z) * 10px + 4px), calc(var(--z) * -8px - 5px), 0);
+  }
+}
+
+/* One central column. The float sits above it and the story reads down the
+   middle of the frame, so the composition has a single focal axis instead of
+   copy scattered into the corners. */
+.scene-axis {
+  position: absolute;
+  left: 50%;
+  bottom: 12%;
+  width: min(64ch, 78vw);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.scene-axis .frag {
+  position: relative;
+  width: 100%;
+}
+
+.frag-label {
+  margin-bottom: 1.1rem;
+}
+
+.frag-label .frag-inner {
+  font-family: var(--font-data);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 0.64rem;
+  font-weight: 500;
+  letter-spacing: 0.48em;
+  text-indent: 0.48em;
+  text-transform: uppercase;
+  color: rgba(238, 244, 248, 0.72);
+  animation-duration: 21s;
+}
+
+.frag-tick {
+  width: 2.2rem;
+  height: 1px;
+  background: rgba(238, 244, 248, 0.42);
+}
+
+.frag-title {
+  margin-bottom: 1.1rem;
+}
+
+.frag-title .frag-inner {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 3.5vw, 3.4rem);
+  font-weight: 200;
+  line-height: 1.06;
+  letter-spacing: -0.03em;
+  text-wrap: pretty;
+  animation-duration: 17s;
+}
+
+.frag-subtitle {
+  max-width: 54ch;
+  margin: 0 auto 1.3rem;
+}
+
+.frag-subtitle .frag-inner {
+  margin: 0;
+  font-size: clamp(0.95rem, 1.08vw, 1.08rem);
+  font-weight: 300;
+  line-height: 1.72;
+  color: rgba(238, 244, 248, 0.84);
+  animation-duration: 15s;
+}
+
+/* The platform's own voice, quieter and set below the narrative. */
+.frag-note {
+  max-width: 50ch;
+  margin: 0 auto 2rem;
+}
+
+.frag-note .frag-inner {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.66;
+  color: rgba(238, 244, 248, 0.66);
+  animation-duration: 19s;
+}
+
+/* Observations sit under the narrative as three even columns: balanced, and
+   they fill the width the single column would otherwise leave empty. */
+.scene-detail {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.8rem;
+  width: 100%;
+  padding-top: 1.6rem;
+  border-top: 1px solid rgba(238, 244, 248, 0.14);
+}
+
+.frag-insight {
+  text-align: left;
+}
+
+.frag-insight .frag-inner {
+  animation-duration: calc(14s + var(--slot) * 3s);
+}
+
+.insight-term {
+  font-family: var(--font-data);
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 0.55rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: rgba(238, 244, 248, 0.5);
+}
+
+.insight-text {
+  margin: 0;
+  font-size: 0.86rem;
+  font-weight: 300;
+  line-height: 1.6;
+  color: rgba(238, 244, 248, 0.88);
+}
+
+/* Instrument readings: deepest layer, hung either side of the float so the
+   centre of the frame belongs to the float alone. Half the readings to the
+   left, half to the right, each stack capped well short of the centre. */
+.frag-params {
+  position: absolute;
+  top: 13%;
+  width: min(26ch, 26vw);
+}
+
+.frag-params.is-left {
+  left: clamp(1.2rem, 5vw, 4.5rem);
+}
+
+.frag-params.is-right {
+  right: clamp(1.2rem, 5vw, 4.5rem);
+}
+
+.frag-params .frag-inner {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.1rem, 2.4vh, 2.2rem);
+  animation-duration: 24s;
+}
+
+.frag-params.is-left .param {
+  text-align: right;
+}
+
+.frag-params.is-right .param {
+  text-align: left;
+}
+
+.param {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.param span {
+  font-family: var(--font-data);
+  font-size: 0.54rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(238, 244, 248, 0.5);
+}
+
+.param b {
+  font-family: var(--font-data);
+  font-variant-numeric: tabular-nums;
+  font-size: 1.45rem;
+  font-weight: 200;
+  letter-spacing: -0.02em;
+  color: rgba(238, 244, 248, 0.94);
+}
+
+.param i {
+  font-style: normal;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  color: rgba(238, 244, 248, 0.45);
+}
+
+/* Closing actions, brought forward against the camera. */
+.frag-actions .frag-inner {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.6rem;
+  animation-duration: 20s;
+}
+
+.scene-cta {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.9rem 2rem;
+  border: 1px solid #eef4f8;
+  background: #eef4f8;
+  color: #03121f;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.35s ease, color 0.35s ease;
+}
+
+.scene-cta:hover {
+  background: transparent;
+  color: #eef4f8;
+}
+
+.scene-cta.ghost {
+  border-color: rgba(238, 244, 248, 0.32);
+  background: transparent;
+  color: rgba(238, 244, 248, 0.82);
+}
+
+.scene-cta.ghost:hover {
+  border-color: #eef4f8;
+  color: #eef4f8;
+}
+
+/* Journey progress: one hairline, filled by the master timeline. */
+.dive-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  height: 1px;
+  background: rgba(238, 244, 248, 0.14);
+}
+
+.dive-progress i {
+  display: block;
+  height: 100%;
+  background: rgba(238, 244, 248, 0.7);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* Arrival veil: matches the colour the landing page dives into. */
+.dive-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: #02121f;
+  pointer-events: none;
+}
+
+/* Narrow screens cannot hold a composition this wide, so the fragments stack
+   into one column. They keep their depth, their timing and their motion. */
+@media (max-width: 1000px) {
+  .argo {
+    top: 7%;
+    width: clamp(110px, 26vw, 160px);
+  }
+
+  .scene-axis,
+  .prologue {
+    width: 86vw;
+    bottom: 8%;
+  }
+
+  .frag-title .frag-inner {
+    font-size: clamp(1.55rem, 6vw, 2.2rem);
+  }
+
+  .prologue-title {
+    font-size: clamp(1.9rem, 8vw, 2.6rem);
+  }
+
+  .frag-subtitle .frag-inner,
+  .prologue-intro {
+    font-size: 0.88rem;
+    line-height: 1.62;
+  }
+
+  .frag-note {
+    display: none;
+  }
+
+  /* Three columns of detail will not fit; stack them. */
+  .scene-detail {
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+    padding-top: 1.1rem;
+  }
+
+  /* The same left/right split, tightened: the float keeps the middle. */
+  .frag-params {
+    top: 11%;
+    width: min(15ch, 30vw);
+  }
+
+  .frag-params.is-left,
+  .frag-params.is-right {
+    left: auto;
+    right: auto;
+  }
+
+  .frag-params.is-left {
+    left: 0.9rem;
+  }
+
+  .frag-params.is-right {
+    right: 0.9rem;
+  }
+
+  .frag-params .frag-inner {
+    gap: 0.85rem;
+  }
+
+  .param span {
+    font-size: 0.46rem;
+    letter-spacing: 0.2em;
+  }
+
+  .param b {
+    font-size: 1.05rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ocean-shafts i,
+  .ocean-caustics,
+  .frag-inner,
+  .argo-inner,
+  .argo-pin {
+    animation: none;
+  }
+}

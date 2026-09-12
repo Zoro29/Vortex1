@@ -1,0 +1,153 @@
+/*
+ * The ocean environment, shared by every page that puts the user in the water.
+ *
+ * Everything reacts to one custom property, `--light` (1 at the surface, 0 in
+ * the abyss), which the page's own timeline or scroll drives. Set it on the
+ * container that wraps these layers.
+ */
+
+/* ---- The water --------------------------------------------------------- */
+
+.ocean {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Base water colour. GSAP tweens this continuously with depth. */
+.ocean-body {
+  position: absolute;
+  inset: 0;
+  background-color: #1a7a97;
+}
+
+/* Light penetrating from the surface: brightest overhead, gone by the abyss. */
+.ocean-body::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    120% 70% at 50% -20%,
+    rgba(190, 240, 255, 0.55) 0%,
+    rgba(150, 220, 245, 0.18) 32%,
+    rgba(0, 0, 0, 0) 68%
+  );
+  opacity: var(--light);
+}
+
+/* Sun shafts. Skewed columns that sway independently so the water reads as
+   moving even when the page is still. */
+.ocean-shafts {
+  position: absolute;
+  inset: -20% -10% 0;
+  opacity: calc(var(--light) * 0.9);
+  mix-blend-mode: screen;
+}
+
+.ocean-shafts i {
+  position: absolute;
+  top: -10%;
+  width: 16vw;
+  height: 150%;
+  background: linear-gradient(
+    to bottom,
+    rgba(203, 243, 255, 0.34) 0%,
+    rgba(203, 243, 255, 0.12) 38%,
+    rgba(203, 243, 255, 0) 78%
+  );
+  filter: blur(14px);
+  transform-origin: top center;
+  animation: shaft-sway 15s ease-in-out infinite alternate;
+}
+
+.ocean-shafts i:nth-child(1) {
+  left: 6%;
+  animation-duration: 17s;
+}
+
+.ocean-shafts i:nth-child(2) {
+  left: 31%;
+  width: 11vw;
+  animation-duration: 13s;
+  animation-delay: -4s;
+}
+
+.ocean-shafts i:nth-child(3) {
+  left: 58%;
+  width: 19vw;
+  animation-duration: 19s;
+  animation-delay: -8s;
+}
+
+.ocean-shafts i:nth-child(4) {
+  left: 82%;
+  width: 9vw;
+  animation-duration: 11s;
+  animation-delay: -2s;
+}
+
+@keyframes shaft-sway {
+  from {
+    transform: rotate(-9deg) scaleX(0.85);
+    opacity: 0.55;
+  }
+  to {
+    transform: rotate(-2deg) scaleX(1.15);
+    opacity: 1;
+  }
+}
+
+/* Caustics: the rippled light cast by surface waves. Only near the top. */
+.ocean-caustics {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 60vh;
+  opacity: calc(var(--light) * var(--light) * 0.5);
+  background-image: repeating-linear-gradient(
+      108deg,
+      rgba(214, 248, 255, 0.11) 0px,
+      rgba(214, 248, 255, 0) 26px,
+      rgba(214, 248, 255, 0.09) 52px
+    ),
+    repeating-linear-gradient(
+      -72deg,
+      rgba(214, 248, 255, 0.09) 0px,
+      rgba(214, 248, 255, 0) 34px,
+      rgba(214, 248, 255, 0.08) 66px
+    );
+  filter: blur(3px);
+  animation: caustics-shift 22s linear infinite;
+}
+
+@keyframes caustics-shift {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 220px 90px, -180px 120px;
+  }
+}
+
+/* Water haze: turbidity closing in as the light goes. */
+.ocean-haze {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    92% 68% at 50% 42%,
+    rgba(0, 0, 0, 0) 38%,
+    rgba(0, 0, 0, 0.42) 78%,
+    rgba(0, 0, 0, 0.72) 100%
+  );
+  opacity: calc(0.9 - var(--light) * 0.45);
+}
+
+/* Marine snow and bubbles, drawn on one canvas. */
+.ocean-particles {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
