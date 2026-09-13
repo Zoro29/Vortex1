@@ -276,10 +276,12 @@ export default function Home() {
       Observer.create({
         target: window,
         type: "wheel,touch,pointer",
-        // Scroll down (onDown) -> Next chapter
+        // Vertical and horizontal forward gestures -> Next chapter
         onDown: () => gotoChapter(currentIndex + 1), 
-        // Scroll up (onUp) -> Prev chapter
+        onLeft: () => gotoChapter(currentIndex + 1), 
+        // Vertical and horizontal backward gestures -> Prev chapter
         onUp: () => gotoChapter(currentIndex - 1),   
+        onRight: () => gotoChapter(currentIndex - 1),
         preventDefault: true,
         ignore: "button, a, .home-cta, .story-action, .story-title",
       });
