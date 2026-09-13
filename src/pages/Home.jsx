@@ -128,6 +128,8 @@ function Scene({ anim }) {
   );
 }
 
+import Navbar from "../components/Navbar";
+
 export default function Home() {
   const anim = useRef({ zoom: 0 });
   const rootRef = useRef(null);
@@ -363,6 +365,7 @@ export default function Home() {
 
   return (
     <main className={`home ${entered ? "is-entered" : ""}`} ref={rootRef}>
+      <Navbar />
       <section className="home-hero">
         <div className="home-stage" ref={stageRef}>
           <Scene anim={anim} />
